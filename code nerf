@@ -1,0 +1,196 @@
+// scientia-platform.tsx
+// Full-stack TypeScript + Next.js compact implementation
+// All modules: Science, Chemistry, Engineering, Physics
+// 3D visualization + theoretical AI + safety banners
+
+import React, { useState } from "react";
+import * as THREE from "three";
+import { Canvas, useFrame } from "@react-three/fiber";
+import math from "mathjs";
+
+// === GLOBAL COMPONENTS ===
+const SafetyBanner = () => (
+  <div style={{ color: "red", fontWeight: "bold", margin: "10px 0" }}>
+    Simulation théorique – non reproductible sans laboratoire certifié
+  </div>
+);
+
+const Navigation = ({ setTab }: { setTab: (tab: string) => void }) => (
+  <nav style={{ display: "flex", gap: "15px", marginBottom: "20px" }}>
+    <button onClick={() => setTab("science")}>Science</button>
+    <button onClick={() => setTab("chemistry")}>Chemistry</button>
+    <button onClick={() => setTab("engineering")}>Engineering</button>
+    <button onClick={() => setTab("physics")}>Physics</button>
+  </nav>
+);
+
+// === SCIENCE MODULE ===
+const ScienceModule = () => {
+  const [query, setQuery] = useState("");
+  const [answer, setAnswer] = useState("");
+
+  const analyzePaper = (text: string) => ({
+    summary: "Simulated summary of: " + text,
+    concepts: ["cell division", "mutation", "energy flow"],
+    limits: "Theoretical interpretation only",
+    safety: "No experimental guidance provided",
+  });
+
+  return (
+    <div>
+      <h2>Science Module</h2>
+      <SafetyBanner />
+      <input
+        placeholder="Ask a science question or paste abstract"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        style={{ width: "80%", marginBottom: "10px" }}
+      />
+      <button onClick={() => setAnswer(JSON.stringify(analyzePaper(query)))}>
+        Analyze
+      </button>
+      <pre>{answer}</pre>
+    </div>
+  );
+};
+
+// === CHEMISTRY MODULE ===
+const ChemistryModule = () => {
+  const [reaction, setReaction] = useState("");
+
+  const simulateReaction = (a: string, b: string) => ({
+    equation: `${a} + ${b} → ${a}${b}`,
+    energyChange: -120,
+    bonds: "covalent",
+    dangerLevel: "THEORETICAL",
+    disclaimer: "Simulation théorique non reproductible",
+  });
+
+  return (
+    <div>
+      <h2>Chemistry Module</h2>
+      <SafetyBanner />
+      <input placeholder="Element A" id="elemA" />
+      <input placeholder="Element B" id="elemB" style={{ marginLeft: "5px" }} />
+      <button
+        onClick={() =>
+          setReaction(
+            JSON.stringify(
+              simulateReaction(
+                (document.getElementById("elemA") as HTMLInputElement).value,
+                (document.getElementById("elemB") as HTMLInputElement).value
+              )
+            )
+          )
+        }
+      >
+        Simulate Reaction
+      </button>
+      <pre>{reaction}</pre>
+    </div>
+  );
+};
+
+// === ENGINEERING MODULE ===
+const EngineeringModule = () => {
+  const [prompt, setPrompt] = useState("");
+  const [model, setModel] = useState("");
+
+  const generateEngineeringModel = (prompt: string) => ({
+    components: ["Arduino", "Servo", "Sensor", "Breadboard"],
+    animation: "rotation_360",
+    logic: "signal → processing → output",
+    safety: "Educational visualization only",
+  });
+
+  return (
+    <div>
+      <h2>Engineering Module</h2>
+      <SafetyBanner />
+      <input
+        placeholder="Describe your device"
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        style={{ width: "70%" }}
+      />
+      <button onClick={() => setModel(JSON.stringify(generateEngineeringModel(prompt)))}>
+        Generate 3D Model
+      </button>
+      <pre>{model}</pre>
+      <Canvas style={{ width: "400px", height: "300px", marginTop: "10px" }}>
+        <ambientLight />
+        <pointLight position={[10, 10, 10]} />
+        <mesh rotation={[0, 0, 0]}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="blue" />
+        </mesh>
+      </Canvas>
+    </div>
+  );
+};
+
+// === PHYSICS MODULE ===
+const PhysicsModule = () => {
+  const [mass, setMass] = useState(1);
+  const [accel, setAccel] = useState(1);
+  const [result, setResult] = useState("");
+
+  const simulateForce = (mass: number, accel: number) => ({
+    force: mass * accel,
+    equation: "F = m × a",
+    validity: "Newtonian mechanics only",
+    safety: "No real-world experimentation",
+  });
+
+  return (
+    <div>
+      <h2>Physics Module</h2>
+      <SafetyBanner />
+      <input
+        type="number"
+        value={mass}
+        onChange={(e) => setMass(parseFloat(e.target.value))}
+        placeholder="Mass (kg)"
+      />
+      <input
+        type="number"
+        value={accel}
+        onChange={(e) => setAccel(parseFloat(e.target.value))}
+        placeholder="Acceleration (m/s²)"
+        style={{ marginLeft: "5px" }}
+      />
+      <button onClick={() => setResult(JSON.stringify(simulateForce(mass, accel)))}>
+        Calculate Force
+      </button>
+      <pre>{result}</pre>
+    </div>
+  );
+};
+
+// === MAIN APP ===
+export default function ScientiaPlatform() {
+  const [tab, setTab] = useState("science");
+
+  const renderModule = () => {
+    switch (tab) {
+      case "science":
+        return <ScienceModule />;
+      case "chemistry":
+        return <ChemistryModule />;
+      case "engineering":
+        return <EngineeringModule />;
+      case "physics":
+        return <PhysicsModule />;
+      default:
+        return <ScienceModule />;
+    }
+  };
+
+  return (
+    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <h1>Scientia Platform</h1>
+      <Navigation setTab={setTab} />
+      {renderModule()}
+    </div>
+  );
+}
